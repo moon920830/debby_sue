@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { SidebarContext } from '../context/SidebarContext'
 import {
   SearchIcon,
@@ -11,13 +11,53 @@ import {
 import { Badge, Input, Dropdown, DropdownItem, WindmillContext } from '@windmill/react-ui'
 import { Button } from '@windmill/react-ui'
 import UserImg from '../assets/img/user.png'
+import detectEthereumProvider from '@metamask/detect-provider';
+// import { useSDK } from "@metamask/sdk-react";
 
 function Header() {
-  const { mode, toggleMode } = useContext(WindmillContext)
   const { toggleSidebar } = useContext(SidebarContext)
 
   const [isNotificationsMenuOpen, setIsNotificationsMenuOpen] = useState(false)
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
+
+  const [ethereum, setEthereum] = useState(null);
+  const [connected, setConnected] = useState(false);
+
+  useEffect(() => {
+    const initMetamask = async () => {
+      const provider = await detectEthereumProvider();
+      if (provider) {
+        setEthereum(provider);
+        // Check if Metamask is already connected
+        if (provider.isConnected()) {
+          setConnected(true);
+        }
+      } else {
+        console.log('Metamask not detected');
+      }
+    };
+
+    initMetamask();
+  }, []);
+
+  const connectToMetamask = async () => {
+    try {
+      if (!connected) {
+        // Request Metamask to connect
+        await ethereum.request({ method: 'eth_requestAccounts' });
+        setConnected(true);
+        console.log('Connected to Metamask');
+      } else {
+        // Disconnect Metamask
+        await ethereum.request({ method: 'wallet_requestPermissions', params: [{ eth_accounts: {} }] });
+        setConnected(false);
+        console.log('Disconnected from Metamask');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
 
   function handleNotificationsClick() {
     setIsNotificationsMenuOpen(!isNotificationsMenuOpen)
@@ -39,7 +79,7 @@ function Header() {
           <MenuIcon className="w-6 h-6" aria-hidden="true" />
         </button>
         {/* <!-- Search input --> */}
-        <div className="flex flex-1 lg:mr-32">
+        <div className="hidden md:flex md:flex-1 md:mr-32  ">
           <div className="relative w-full max-w-xl mr-6 focus-within:text-purple-500">
             <div className="absolute inset-y-0 flex items-center pr-2 right-0">
               <SearchIcon className="w-4 h-4" aria-hidden="true" />
@@ -137,8 +177,8 @@ function Header() {
           </li>
 
           <li className='relative'>
-            <Button>
-              Connect Wallet
+            <Button onClick={connectToMetamask}>
+              {connected ? 'Connect to Wallet' : 'Disconnect from Wallet'}
             </Button>
           </li>
           

@@ -111,7 +111,7 @@ function Forms() {
               </div>
             </div>
             <div className='flex flex-col space-y-2 text-base text-gray-400'>
-              <div className='grid gap-6 mb-8 lg:grid-cols-2'>
+              <div className='grid gap-6 mb-8 grid-cols-2'>
                 <div className='flex flex-col'>
                   <p className='flex flex-row items-center space-x-1'><p>Market Cap</p><img src={QuestionImg} alt="question tag" className='w-2 h-2'></img></p>
                   <p className='text-white text-xl'>$14.7M</p>
@@ -121,7 +121,7 @@ function Forms() {
                   <p className='text-white text-xl'>4M</p>
                 </div>
               </div>
-              <div className='grid gap-6 mb-8 lg:grid-cols-2'>
+              <div className='grid gap-6 mb-8 grid-cols-2'>
                 <div className='fklex flex-col'>
                   <p className='flex flex-row items-center space-x-1'><p>Liquidity</p><img src={QuestionImg} alt="question tag" className='w-2 h-2'></img></p>
                   <p className='text-white text-xl'>$1.2M</p>
